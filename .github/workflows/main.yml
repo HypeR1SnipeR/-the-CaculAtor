@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - name: Install dependencies
+        run: |
+          go get -v ./...
+      - name: Build and Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          TAG_NAME="${{ github.ref }}"
+          TAG_NAME="${TAG_NAME#refs/tags/}"
+          echo "Tag name: $TAG_NAME"
+          goreleaser release --rm-dist
+          docker build -t $DOCKERHUB_USERNAME/$GITHUB_REPOSITORY:$TAG_NAME .
+          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker push $DOCKERHUB_USERNAME/$GITHUB_REPOSITORY:$TAG_NAME

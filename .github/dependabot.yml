@@ -1,18 +1,6 @@
-name: Dependabot
-
-on:
-  schedule:
-    - cron: "0 0 * * *"
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: dependabot/go-action@v0.1.1
-        with:
-          directory: "."
-          review-policy: "review_everything"
-      - uses: dependabot/docker-action@v2.7.0
-        with:
-          directory: "."
-          review-policy: "review_everything"
+version: 2
+updates:
+  - package-ecosystem: "golang"
+    directory: "/"
+    schedule:
+      interval: "daily"

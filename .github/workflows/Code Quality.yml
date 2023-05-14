@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Run SuperCalculator 3
+    - name: Run Super_Calculator
       run: supercalculator3
 
   superlinter:
